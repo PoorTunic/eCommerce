@@ -2,7 +2,8 @@ package com.example.demo.model.persistence;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -15,8 +16,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
 @Table(name = "user_order")
 public class UserOrder {
@@ -26,17 +25,16 @@ public class UserOrder {
 	@JsonProperty
 	@Column
 	private Long id;
-	
+
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JsonProperty
-	@Column
-    private List<Item> items;
-	
+	private List<Item> items;
+
 	@ManyToOne
-	@JoinColumn(name="user_id", nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
 	@JsonProperty
-    private User user;
-	
+	private User user;
+
 	@JsonProperty
 	@Column
 	private BigDecimal total;
@@ -64,7 +62,7 @@ public class UserOrder {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
 	public BigDecimal getTotal() {
 		return total;
 	}
@@ -75,10 +73,10 @@ public class UserOrder {
 
 	public static UserOrder createFromCart(Cart cart) {
 		UserOrder order = new UserOrder();
-		order.setItems(cart.getItems().stream().collect(Collectors.toList()));
-		order.setTotal(cart.getTotal());
+		order.setItems(cart.getItems() == null ? List.of() : cart.getItems().stream().toList());
+		order.setTotal(cart.getTotal() == null ? BigDecimal.ZERO : cart.getTotal());
 		order.setUser(cart.getUser());
 		return order;
 	}
-	
+
 }

@@ -14,81 +14,43 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "cart")
+@Getter
+@Setter
 public class Cart {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty
 	@Column
 	private Long id;
-	
+
 	@ManyToMany
 	@JsonProperty
-	@Column
-    private List<Item> items;
-	
+	private List<Item> items = new ArrayList<>();
+
 	@OneToOne(mappedBy = "cart")
 	@JsonProperty
-    private User user;
-	
+	private User user;
+
 	@Column
 	@JsonProperty
 	private BigDecimal total;
-	
-	public BigDecimal getTotal() {
-		return total;
-	}
 
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public List<Item> getItems() {
-		return items;
-	}
-
-	public void setItems(List<Item> items) {
-		this.items = items;
-	}
-	
 	public void addItem(Item item) {
-		if(items == null) {
-			items = new ArrayList<>();
-		}
 		items.add(item);
-		if(total == null) {
-			total = new BigDecimal(0);
-		}
+		total = total == null ? BigDecimal.ZERO : total;
 		total = total.add(item.getPrice());
 	}
-	
+
 	public void removeItem(Item item) {
-		if(items == null) {
-			items = new ArrayList<>();
-		}
 		items.remove(item);
-		if(total == null) {
-			total = new BigDecimal(0);
-		}
+		total = total == null ? BigDecimal.ZERO : total;
 		total = total.subtract(item.getPrice());
 	}
+
 }
