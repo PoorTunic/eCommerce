@@ -10,26 +10,26 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn -B package'
+                sh 'cd starter_code && mvn -B package'
             }
         }
 
         stage('Test') {
             steps {
-                bat 'mvn -B test'
+                sh 'cd starter_code && mvn -B test'
             }
         }
 
         stage('Archive') {
             steps {
-                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+                archiveArtifacts artifacts: 'starter_code/target/*.war', fingerprint: true
             }
         }
     }
 
     post {
         always {
-            junit 'target/surefire-reports/*.xml'
+            junit 'starter_code/target/surefire-reports/*.xml'
         }
     }
 }
